@@ -13,8 +13,10 @@ public class Main extends JPanel implements KeyListener, Runnable{
     // 2 - Gameplay Screen
     // 3 - Loss
     public static int gameState = 0;
+    public static boolean isTransition = false;
     public static BufferedImage gs0;
     public static BufferedImage gs1;
+    public static BufferedImage loss;
 
     // Move States
     // Move state will be global integer variable
@@ -23,13 +25,15 @@ public class Main extends JPanel implements KeyListener, Runnable{
     // 1 - transition from credits screen to menu screen
     // 2 - transition from menu screen to game screen
     // 3 - transition from loss screen to menu screen
-    // (transition from game screen to loss screen will be done during gameplay phase)
-    public static int moveState = -1;
+
 
     //Global Coordinate Variables
     public static int backGroundX = 0;
     public static int backGroundY = 0;
 
+    //modifier variable is how much to move the screen by
+    public static int xmodifier = 0;
+    public static int ymodifier = 0;
     public static int foreGroundX = 0;
     public static int foreGroundY = 0;
 
@@ -49,35 +53,45 @@ public class Main extends JPanel implements KeyListener, Runnable{
     {
         super.paintComponent(g);
         g.drawImage(gs0, backGroundX, backGroundY, null);
-        g.drawImage(gs1, foreGroundX, foreGroundY, null);
+        //g.drawImage(gs1, foreGroundX, foreGroundY, null);
 
-        // Based off the movestate, we create animations
-        if(moveState == 0)
-        {
-            System.out.println("menu to credits");
-            //create anims for menu to credits
-            moveState = -1;
+        //Drawing different game states
+        if(gameState == 0){
+            if(isTransition){
+                backGroundX += xmodifier;
+                g.drawImage(gs0, backGroundX, backGroundY, null);
+                if(backGroundX == 0){
+                    isTransition = false;
+                }
+            }
+        }
 
+        //right side of screen
+        if(gameState == 1){
+            if(isTransition){
+                backGroundX += xmodifier;
+                g.drawImage(gs0, backGroundX, backGroundY, null);
+                if(backGroundX == -400){
+                    isTransition = false;
+                }
+            }
         }
-        else if(moveState == 1)
-        {
-            System.out.println("credits to menu");
-            //create anims for credits to menu
-            moveState = -1;
-        }
-        else if(moveState == 2)
-        {
-            System.out.println("menu to game");
-            //create anims for menu to game
-            moveState = -1;
-        }
-        else if(moveState == 3)
-        {
-            System.out.println("loss to menu");
-            //create anims for loss to menu
-            moveState = -1;
 
+        //bottom part of screen
+        if(gameState == 2){
+            if(isTransition){
+                backGroundY += ymodifier;
+                g.drawImage(gs0, backGroundX, backGroundY, null);
+                if(backGroundY == -600){
+                    isTransition = false;
+                }
+            }
         }
+
+        if(gameState == 3){
+            g.drawImage(loss, 0, 0, null);
+        }
+
 
     }
 
@@ -97,15 +111,19 @@ public class Main extends JPanel implements KeyListener, Runnable{
 
 
     public static void main(String[] args) throws IOException{
+        System.out.println("1 gameplay, 2 for credits");
 
         gs0 = ImageIO.read(new File("Background.png"));
         gs1 = ImageIO.read(new File("ForeGround.png"));
+        loss = ImageIO.read(new File("Loss.png"));
+
+
         JFrame frame = new JFrame("Binary Bomber");
         JPanel panel = new Main();
         frame.add(panel);
         frame.setVisible(true);
         frame.pack();
-        
+
 
     }
 
@@ -115,51 +133,70 @@ public class Main extends JPanel implements KeyListener, Runnable{
     // s - menu to game
     // t - game to loss(no anim between them necessary rn)
     // l - loss to menu
+    // changed to 1 and 2 for the moment (1 = lose, 2 = win)
     public void keyPressed(KeyEvent e){
-        // menu to credits and menu to game detect
-        if(gameState == 0 && moveState == -1)
-        {
-            if(e.getKeyChar() == 'c')
-            {
-                moveState = 0;
-                gameState = 1;
-            }
-            else if(e.getKeyChar() == 's')
-            {
-                moveState = 2;
+        //while in menu
+        //when a character is pressed, set isTransition to true
+        //then change the modifier (this determines how fast a screen will scroll) (make it accelerate in future)
+        if(gameState == 0){
+
+            if(e.getKeyChar() == '1'){
+                //goes to gameplay screen
+
+                ymodifier = -25;
                 gameState = 2;
+                isTransition = true;
+                System.out.println("any key to lose");
+
+                repaint();
             }
-        }
-        // credits to menu detect
-        else if(gameState == 1 && moveState == -1)
-        {
-            if(e.getKeyChar() == 'b')
-            {
-                moveState = 1;
-                gameState = 0;
-            }
-        }
-        // game to loss access
-        else if(gameState == 2)
-        {
-            if(e.getKeyChar() == 't')
-            {
-                gameState = 3;
-                System.out.println("You Lose");
+            else if(e.getKeyChar() == '2'){
+                //goes to credits
+                xmodifier = -20;
+                gameState = 1;
+                isTransition = true;
+                System.out.println("any key to go back to menu");
+
+                repaint();
             }
         }
 
-        // loss to menu detect
-        else if(gameState == 3 && moveState == -1)
-        {
-            if(e.getKeyChar() == 'l')
-            {
-                moveState = 3;
-                gameState = 0;
-            }
+        //while in credits screen
+        else if(gameState == 1){
+
+            xmodifier = 20;
+            gameState = 0;
+            isTransition = true;
+            System.out.println("1 gameplay, 2 for credits");
+            repaint();
+
         }
+
+        //while in gameplay
+        else if(gameState == 2){
+            //lose lol
+
+            gameState = 3;
+            backGroundX = 0;
+            backGroundY = 0;
+            System.out.println("any key to go back to menu");
+            repaint();
+
+        }
+
+        else if(gameState == 3){
+
+            backGroundX = 0;
+            backGroundY = 0;
+            gameState = 0;
+            System.out.println("1 gameplay, 2 for credits");
+            repaint();
+
+        }
+
 
     }
+
     public void keyReleased(KeyEvent e){}
     public void keyTyped(KeyEvent e){}
 
