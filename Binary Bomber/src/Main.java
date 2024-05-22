@@ -21,13 +21,13 @@ public class Main extends JPanel implements KeyListener, Runnable{
     //Global Coordinate Variables
     public static int backGroundX = 0;
     public static int backGroundY = 0;
+    public static int foreGroundX = 0;
+    public static int foreGroundY = 0;
+
 
     //modifier variable is how much to move the screen by
     public static int xmodifier = 0;
     public static int ymodifier = 0;
-    public static int foreGroundX = 0;
-    public static int foreGroundY = 0;
-
 
     //panel generating
     public Main(){
@@ -44,13 +44,16 @@ public class Main extends JPanel implements KeyListener, Runnable{
     {
         super.paintComponent(g);
         g.drawImage(gs0, backGroundX, backGroundY, null);
+        g.drawImage(gs1, foreGroundX, foreGroundY, null);
         //g.drawImage(gs1, foreGroundX, foreGroundY, null);
 
         //Drawing different game states
         if(gameState == 0){
             if(isTransition){
                 backGroundX += xmodifier;
+                foreGroundX += xmodifier + 10;
                 g.drawImage(gs0, backGroundX, backGroundY, null);
+                g.drawImage(gs1, foreGroundX, foreGroundY, null);
                 if(backGroundX == 0){
                     isTransition = false;
                 }
@@ -61,7 +64,9 @@ public class Main extends JPanel implements KeyListener, Runnable{
         if(gameState == 1){
             if(isTransition){
                 backGroundX += xmodifier;
+                foreGroundX += xmodifier - 10;
                 g.drawImage(gs0, backGroundX, backGroundY, null);
+                g.drawImage(gs1, foreGroundX, foreGroundY, null);
                 if(backGroundX == -400){
                     isTransition = false;
                 }
@@ -72,7 +77,9 @@ public class Main extends JPanel implements KeyListener, Runnable{
         if(gameState == 2){
             if(isTransition){
                 backGroundY += ymodifier;
+                foreGroundY += ymodifier - 8;
                 g.drawImage(gs0, backGroundX, backGroundY, null);
+                g.drawImage(gs1, foreGroundX, foreGroundY, null);
                 if(backGroundY == -600){
                     isTransition = false;
                 }
@@ -118,12 +125,7 @@ public class Main extends JPanel implements KeyListener, Runnable{
 
     }
 
-    //Set keybinds for now for navigation between states
-    // c - menu to credits
-    // b - credits to menu
-    // s - menu to game
-    // t - game to loss(no anim between them necessary rn)
-    // l - loss to menu
+
     // changed to 1 and 2 for the moment (1 = lose, 2 = win)
     public void keyPressed(KeyEvent e){
         //while in menu
@@ -131,7 +133,7 @@ public class Main extends JPanel implements KeyListener, Runnable{
         //then change the modifier (this determines how fast a screen will scroll) (make it accelerate in future)
         if(gameState == 0){
 
-            if(e.getKeyChar() == '1'){
+            if(e.getKeyChar() == '1' && !isTransition){
                 //goes to gameplay screen
 
                 ymodifier = -25;
@@ -141,7 +143,7 @@ public class Main extends JPanel implements KeyListener, Runnable{
 
                 repaint();
             }
-            else if(e.getKeyChar() == '2'){
+            else if(e.getKeyChar() == '2' && !isTransition){
                 //goes to credits
                 xmodifier = -20;
                 gameState = 1;
@@ -153,7 +155,7 @@ public class Main extends JPanel implements KeyListener, Runnable{
         }
 
         //while in credits screen
-        else if(gameState == 1){
+        else if(gameState == 1 && !isTransition){
 
             xmodifier = 20;
             gameState = 0;
@@ -164,7 +166,7 @@ public class Main extends JPanel implements KeyListener, Runnable{
         }
 
         //while in gameplay
-        else if(gameState == 2){
+        else if(gameState == 2 && !isTransition){
             //lose lol
 
             gameState = 3;
@@ -175,11 +177,15 @@ public class Main extends JPanel implements KeyListener, Runnable{
 
         }
 
-        else if(gameState == 3){
+        // after loss
+        else if(gameState == 3 && !isTransition){
 
             backGroundX = 0;
             backGroundY = 0;
+            foreGroundX = 0;
+            foreGroundY = 0;
             gameState = 0;
+
             System.out.println("1 gameplay, 2 for credits");
             repaint();
 
