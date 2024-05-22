@@ -51,7 +51,7 @@ public class Main extends JPanel implements KeyListener, Runnable{
         if(gameState == 0){
             if(isTransition){
                 backGroundX += xmodifier;
-                foreGroundX += xmodifier + 10;
+                foreGroundX += xmodifier + 20;
                 g.drawImage(gs0, backGroundX, backGroundY, null);
                 g.drawImage(gs1, foreGroundX, foreGroundY, null);
                 if(backGroundX == 0){
@@ -64,7 +64,7 @@ public class Main extends JPanel implements KeyListener, Runnable{
         if(gameState == 1){
             if(isTransition){
                 backGroundX += xmodifier;
-                foreGroundX += xmodifier - 10;
+                foreGroundX += xmodifier - 20;
                 g.drawImage(gs0, backGroundX, backGroundY, null);
                 g.drawImage(gs1, foreGroundX, foreGroundY, null);
                 if(backGroundX == -400){
@@ -112,7 +112,7 @@ public class Main extends JPanel implements KeyListener, Runnable{
         System.out.println("1 gameplay, 2 for credits");
 
         gs0 = ImageIO.read(new File("Background.png"));
-        gs1 = ImageIO.read(new File("ForeGround.png"));
+        gs1 = ImageIO.read(new File("Foreground.png"));
         loss = ImageIO.read(new File("Loss.png"));
 
 
