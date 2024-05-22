@@ -18,15 +18,6 @@ public class Main extends JPanel implements KeyListener, Runnable{
     public static BufferedImage gs1;
     public static BufferedImage loss;
 
-    // Move States
-    // Move state will be global integer variable
-    // -1 - no movestate
-    // 0 - transition from menu screen to credits screen
-    // 1 - transition from credits screen to menu screen
-    // 2 - transition from menu screen to game screen
-    // 3 - transition from loss screen to menu screen
-
-
     //Global Coordinate Variables
     public static int backGroundX = 0;
     public static int backGroundY = 0;
