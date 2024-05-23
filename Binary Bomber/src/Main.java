@@ -24,7 +24,6 @@ public class Main extends JPanel implements KeyListener, Runnable{
     public static int foreGroundX = 0;
     public static int foreGroundY = 0;
 
-
     //modifier variable is how much to move the screen by
     public static int xmodifier = 0;
     public static int ymodifier = 0;
@@ -107,7 +106,6 @@ public class Main extends JPanel implements KeyListener, Runnable{
         }
     }
 
-
     public static void main(String[] args) throws IOException{
         System.out.println("1 gameplay, 2 for credits");
 
@@ -124,7 +122,6 @@ public class Main extends JPanel implements KeyListener, Runnable{
 
 
     }
-
 
     // changed to 1 and 2 for the moment (1 = lose, 2 = win)
     public void keyPressed(KeyEvent e){
@@ -193,9 +190,14 @@ public class Main extends JPanel implements KeyListener, Runnable{
 
 
     }
-
     public void keyReleased(KeyEvent e){}
     public void keyTyped(KeyEvent e){}
 
-
 }
+
+// Change clouds bc they look fugly
+// Change city background bc the lighting makes no sense
+// Change bottom binary part to look better
+// Add text background so you can actually see it
+// maybe change the font bc it also looks fugly
+
