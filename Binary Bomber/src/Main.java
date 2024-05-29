@@ -6,7 +6,7 @@ import java.io.*;
 import java.awt.event.*;
 import java.nio.Buffer;
 import java.security.Key;
-public class Main extends JPanel implements KeyListener, Runnable{
+public class Main extends JPanel implements KeyListener, Runnable, MouseListener{
     // Game States
     // 0 - Start Menu
     // 1 - High score/Credits
@@ -14,9 +14,19 @@ public class Main extends JPanel implements KeyListener, Runnable{
     // 3 - Loss
     public static int gameState = 0;
     public static boolean isTransition = false;
+    public static boolean menuStartPressed = false;
+    public static boolean creditPressed = false;
+    public static boolean CreditBackPressed = false;
     public static BufferedImage gs0;
     public static BufferedImage gs1;
     public static BufferedImage loss;
+    public static BufferedImage menuStartButtonReleased;
+    public static BufferedImage menuStartButtonPressed;
+
+    public static BufferedImage CreditButtonPressed;
+    public static BufferedImage CreditButtonReleased;
+    public static BufferedImage creditBackPressed;
+    public static BufferedImage creditBackReleased;
 
     //Global Coordinate Variables
     public static int backGroundX = 0;
@@ -36,6 +46,7 @@ public class Main extends JPanel implements KeyListener, Runnable{
         // adding Thread (Timer)
         Thread thread = new Thread(this);
         thread.start();
+        addMouseListener(this);
     }
 
     //Paint
@@ -44,6 +55,21 @@ public class Main extends JPanel implements KeyListener, Runnable{
         super.paintComponent(g);
         g.drawImage(gs0, backGroundX, backGroundY, null);
         g.drawImage(gs1, foreGroundX, foreGroundY, null);
+        g.drawImage(menuStartButtonReleased, foreGroundX + 50, foreGroundY + 200, null);
+        if(menuStartPressed)
+        {
+            g.drawImage(menuStartButtonPressed, foreGroundX + 50, foreGroundY + 200, null);
+        }
+        g.drawImage(CreditButtonReleased, foreGroundX+120, foreGroundY +340, null);
+        if(creditPressed)
+        {
+            g.drawImage(CreditButtonPressed, foreGroundX+120, foreGroundY +340, null);
+        }
+        g.drawImage(creditBackReleased, foreGroundX + 520, foreGroundY + 500, null);
+        if(CreditBackPressed)
+        {
+            g.drawImage(creditBackPressed,foreGroundX + 520, foreGroundY + 500, null);
+        }
         //g.drawImage(gs1, foreGroundX, foreGroundY, null);
 
         //Drawing different game states
@@ -53,6 +79,10 @@ public class Main extends JPanel implements KeyListener, Runnable{
                 foreGroundX += xmodifier + 20;
                 g.drawImage(gs0, backGroundX, backGroundY, null);
                 g.drawImage(gs1, foreGroundX, foreGroundY, null);
+                g.drawImage(menuStartButtonReleased, foreGroundX + 50, foreGroundY + 200, null);
+                g.drawImage(CreditButtonReleased, foreGroundX+120, foreGroundY +340, null);
+                g.drawImage(creditBackReleased, foreGroundX + 620, foreGroundY + 500, null);
+
                 if(backGroundX == 0){
                     isTransition = false;
                 }
@@ -66,6 +96,10 @@ public class Main extends JPanel implements KeyListener, Runnable{
                 foreGroundX += xmodifier - 20;
                 g.drawImage(gs0, backGroundX, backGroundY, null);
                 g.drawImage(gs1, foreGroundX, foreGroundY, null);
+                g.drawImage(menuStartButtonReleased, foreGroundX + 50, foreGroundY + 200, null);
+                g.drawImage(CreditButtonReleased, foreGroundX+120, foreGroundY +340, null);
+                g.drawImage(creditBackReleased, foreGroundX + 620, foreGroundY + 500, null);
+
                 if(backGroundX == -400){
                     isTransition = false;
                 }
@@ -79,6 +113,9 @@ public class Main extends JPanel implements KeyListener, Runnable{
                 foreGroundY += ymodifier - 9;
                 g.drawImage(gs0, backGroundX, backGroundY, null);
                 g.drawImage(gs1, foreGroundX, foreGroundY, null);
+                g.drawImage(menuStartButtonReleased, foreGroundX + 50, foreGroundY + 200, null);
+                g.drawImage(CreditButtonReleased, foreGroundX+120, foreGroundY +340, null);
+                g.drawImage(creditBackReleased, foreGroundX + 620, foreGroundY + 500, null);
                 if(backGroundY == -600){
                     isTransition = false;
                 }
@@ -112,7 +149,12 @@ public class Main extends JPanel implements KeyListener, Runnable{
         gs0 = ImageIO.read(new File("Background.png"));
         gs1 = ImageIO.read(new File("Foreground.png"));
         loss = ImageIO.read(new File("GameOver.png"));
-
+        menuStartButtonReleased = ImageIO.read(new File("StartButtonReleased.png"));
+        menuStartButtonPressed = ImageIO.read(new File("StartButtonPressed.png"));
+        CreditButtonPressed = ImageIO.read(new File("CreditButtonPressed.png"));
+        CreditButtonReleased = ImageIO.read(new File("CreditButtonReleased.png"));
+        creditBackPressed = ImageIO.read(new File("CreditBackPressed.png"));
+        creditBackReleased = ImageIO.read(new File("CreditBackReleased.png"));
 
         JFrame frame = new JFrame("Binary Bomber");
         JPanel panel = new Main();
@@ -193,6 +235,62 @@ public class Main extends JPanel implements KeyListener, Runnable{
     }
     public void keyReleased(KeyEvent e){}
     public void keyTyped(KeyEvent e){}
+
+    // Mousebinding
+    public void mouseExited(MouseEvent e){}
+    public void mousePressed(MouseEvent e){
+        if(gameState == 0)
+        {
+            if(e.getX() >= 50 && e.getX() <= 350 && e.getY() >= 200 && e.getY() <= 330 && !isTransition)
+            {
+                menuStartPressed = true;
+            }
+        }
+        if(gameState == 0)
+        {
+            if(e.getX() >= 120 && e.getX() <= 280 && e.getY() >= 340 && e.getY() <= 390 && !isTransition)
+            {
+                creditPressed = true;
+            }
+        }
+        if(gameState == 1)
+        {
+            if(e.getX() >= 620 && e.getX() <= 730 && e.getY() >= 500 && e.getY() <= 550 && !isTransition)
+            {
+                CreditBackPressed = true;
+            }
+        }
+
+    }
+    public void mouseReleased(MouseEvent e){
+        if(menuStartPressed)
+        {
+            ymodifier = -25;
+            gameState = 2;
+            isTransition = true;
+            System.out.println("any key to lose");
+            menuStartPressed = false;
+        }
+        if(creditPressed)
+        {
+            xmodifier = -20;
+            gameState = 1;
+            isTransition = true;
+            System.out.println("any key to go back to menu");
+            creditPressed = false;
+        }
+        if(CreditBackPressed)
+        {
+            xmodifier = 20;
+            gameState = 0;
+            isTransition = true;
+            System.out.println("1 gameplay, 2 for credits");
+            CreditBackPressed = false;
+        }
+    }
+    public void mouseEntered(MouseEvent e){}
+    public void mouseClicked(MouseEvent e){}
+
 
 }
 
