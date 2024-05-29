@@ -76,7 +76,7 @@ public class Main extends JPanel implements KeyListener, Runnable{
         if(gameState == 2){
             if(isTransition){
                 backGroundY += ymodifier;
-                foreGroundY += ymodifier - 8;
+                foreGroundY += ymodifier - 9;
                 g.drawImage(gs0, backGroundX, backGroundY, null);
                 g.drawImage(gs1, foreGroundX, foreGroundY, null);
                 if(backGroundY == -600){
@@ -111,7 +111,7 @@ public class Main extends JPanel implements KeyListener, Runnable{
 
         gs0 = ImageIO.read(new File("Background.png"));
         gs1 = ImageIO.read(new File("Foreground.png"));
-        loss = ImageIO.read(new File("Loss.png"));
+        loss = ImageIO.read(new File("GameOver.png"));
 
 
         JFrame frame = new JFrame("Binary Bomber");
@@ -123,6 +123,7 @@ public class Main extends JPanel implements KeyListener, Runnable{
 
     }
 
+    // Keybinding
     // changed to 1 and 2 for the moment (1 = lose, 2 = win)
     public void keyPressed(KeyEvent e){
         //while in menu
@@ -200,4 +201,3 @@ public class Main extends JPanel implements KeyListener, Runnable{
 // Change bottom binary part to look better
 // Add text background so you can actually see it
 // maybe change the font bc it also looks fugly
-
