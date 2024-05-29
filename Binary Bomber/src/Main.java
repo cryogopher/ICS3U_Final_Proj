@@ -65,12 +65,11 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
         {
             g.drawImage(CreditButtonPressed, foreGroundX+120, foreGroundY +340, null);
         }
-        g.drawImage(creditBackReleased, foreGroundX + 520, foreGroundY + 500, null);
+        g.drawImage(creditBackReleased, foreGroundX + 820, foreGroundY + 500, null);
         if(CreditBackPressed)
         {
-            g.drawImage(creditBackPressed,foreGroundX + 520, foreGroundY + 500, null);
+            g.drawImage(creditBackPressed,foreGroundX + 820, foreGroundY + 500, null);
         }
-        //g.drawImage(gs1, foreGroundX, foreGroundY, null);
 
         //Drawing different game states
         if(gameState == 0){
@@ -81,7 +80,7 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
                 g.drawImage(gs1, foreGroundX, foreGroundY, null);
                 g.drawImage(menuStartButtonReleased, foreGroundX + 50, foreGroundY + 200, null);
                 g.drawImage(CreditButtonReleased, foreGroundX+120, foreGroundY +340, null);
-                g.drawImage(creditBackReleased, foreGroundX + 620, foreGroundY + 500, null);
+                g.drawImage(creditBackReleased, foreGroundX + 820, foreGroundY + 500, null);
 
                 if(backGroundX == 0){
                     isTransition = false;
@@ -98,8 +97,7 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
                 g.drawImage(gs1, foreGroundX, foreGroundY, null);
                 g.drawImage(menuStartButtonReleased, foreGroundX + 50, foreGroundY + 200, null);
                 g.drawImage(CreditButtonReleased, foreGroundX+120, foreGroundY +340, null);
-                g.drawImage(creditBackReleased, foreGroundX + 620, foreGroundY + 500, null);
-
+                g.drawImage(creditBackReleased, foreGroundX + 820, foreGroundY + 500, null);
                 if(backGroundX == -400){
                     isTransition = false;
                 }
@@ -115,7 +113,7 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
                 g.drawImage(gs1, foreGroundX, foreGroundY, null);
                 g.drawImage(menuStartButtonReleased, foreGroundX + 50, foreGroundY + 200, null);
                 g.drawImage(CreditButtonReleased, foreGroundX+120, foreGroundY +340, null);
-                g.drawImage(creditBackReleased, foreGroundX + 620, foreGroundY + 500, null);
+                g.drawImage(creditBackReleased, foreGroundX + 820, foreGroundY + 500, null);
                 if(backGroundY == -600){
                     isTransition = false;
                 }
@@ -255,7 +253,7 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
         }
         if(gameState == 1)
         {
-            if(e.getX() >= 620 && e.getX() <= 730 && e.getY() >= 500 && e.getY() <= 550 && !isTransition)
+            if(e.getX() >= 20 && e.getX() <= 130 && e.getY() >= 500 && e.getY() <= 550 && !isTransition)
             {
                 CreditBackPressed = true;
             }
