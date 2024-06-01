@@ -8,3 +8,8 @@ TD:
  - Bomb touching the bottom of the screen will lose a life
    - implement three lives
  - Sprites for bombs, missles etc.
+
+TD (first check):
+- Falling bombs at random positions
+- Losing lives when bomb touches ground
+- Bombs r removed when bomb value is represented
