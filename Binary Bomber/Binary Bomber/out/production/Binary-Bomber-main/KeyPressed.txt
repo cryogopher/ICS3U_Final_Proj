@@ -1,0 +1,39 @@
+public void keyPressed(KeyEvent e){
+        // menu to credits and menu to game detect
+        if(gameState == 0 && !isTransition)
+        {
+            if(e.getKeyChar() == 'c')
+            {
+                gameState = 1;
+            }
+            else if(e.getKeyChar() == 's')
+            {
+                gameState = 2;
+            }
+        }
+        // credits to menu detect
+        else if(gameState == 1 && !isTransition)
+        {
+            if(e.getKeyChar() == 'b')
+            {
+                gameState = 0;
+            }
+        }
+        // game to loss access
+        else if(gameState == 2)
+        {
+            if(e.getKeyChar() == 't')
+            {
+                gameState = 3;
+                System.out.println("You Lose");
+            }
+        }
+
+        // loss to menu detect
+        else if(gameState == 3 && !isTransition)
+        {
+            if(e.getKeyChar() == 'l')
+            {
+                gameState = 0;
+            }
+        }
