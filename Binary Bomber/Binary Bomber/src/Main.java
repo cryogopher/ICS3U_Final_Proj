@@ -38,6 +38,11 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
     public static BufferedImage binaryDigit1Released;
     public static BufferedImage binaryDigit0Pressed;
     public static BufferedImage binaryDigit1Pressed;
+    public static BufferedImage bomb;
+    //counter for the spawner
+    public static int spawner = 0;
+    //random number the spawnerNum has to be before it spawns a bomb
+    public static int spawnerNum = 0;
 
 
     //</editor-fold>
@@ -53,7 +58,9 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
     public static int xmodifier = 0;
     public static int ymodifier = 0;
     //</editor-fold>
-
+    //<editor-fold desc="Gameplay Variables">
+    public static int lives = 3;
+    //</editor-fold>
     //<editor-fold desc="Arrays">
     public static int[] binary = {0, 0, 0, 0, 0, 0, 0, 0};
     //stores binary value
@@ -157,6 +164,11 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
 
             // Game state 2 gameplay
             if(!isTransition) {
+
+                if(lives <= 0){
+                    g.drawString("LOSELOSELOSELLOSELOE", 0, 300);
+
+                }
                 g.setFont(new Font("Comic Sans MS", 1, 50));
                 g.drawString("Press q to reset", 0, 40);
                 g.setColor(new Color(0, 255, 32));
@@ -204,11 +216,32 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
 
                 //<editor-fold desc="Drawing bombs">
                 //random bomb number display
+                g.setFont(new Font("Comic Sans MS", 1, 25));
                 for (int i = 0, y = 300; i < bombs[0].length; i++, y -= 50) {
                     bombs[2][i] += 1; //this moves the bomb down
+                    if(bombs[2][i] > 500){
+                        lives -= 1;
+                        //if a bomb reaches the bottom, destroy it
+                        bombs = bombCalculator(bombs, bombs[0][i]);
+                        break;
+                    }
+                    g.drawImage(bomb, bombs[1][i], bombs[2][i], null);
+
                     g.drawString(String.valueOf(bombs[0][i]), bombs[1][i], bombs[2][i]);
                 }
                 //</editor-fold>
+
+                System.out.println(lives);
+                //<editor-fold desc="random bomb spawner">
+                if(spawner == 0){
+                    spawnerNum = (int) Math.floor(Math.random() * 160) + 120;
+                }
+                spawner += 1;
+                if(spawnerNum == spawner){
+                    spawner = 0;
+                    bombs = bombCalculator(bombs);
+                //</editor-fold>
+                }
             }
         }
 
@@ -255,6 +288,7 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
         binaryDigit1Released =  ImageIO.read(new File("1Released.png"));
         binaryDigit0Pressed =  ImageIO.read(new File("0Pressed.png"));
         binaryDigit1Pressed =  ImageIO.read(new File("1Pressed.png"));
+        bomb = ImageIO.read(new File("bomb.png"));
 
         JFrame frame = new JFrame("Binary Bomber");
         JPanel panel = new Main();
@@ -264,18 +298,13 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
 
         // set bomb values
         bombs[0][0] = (int) Math.floor(Math.random() * 255) + 1;
-        bombs[0][1] = (int) Math.floor(Math.random() * 255) + 1;
-        bombs[0][2] = (int) Math.floor(Math.random() * 255) + 1;
 
         //setting random x values
         bombs[1][0] = (int) Math.floor(Math.random() * 300) + 10;
-        bombs[1][1] = (int) Math.floor(Math.random() * 300) + 10;
-        bombs[1][2]= (int) Math.floor(Math.random() * 300) + 10;
+
 
         //setting y values
         bombs[2][0] = 0;
-        bombs[2][1] = 0;
-        bombs[2][2]= 0;
 
     }
 
@@ -333,20 +362,16 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
 
         //<editor-fold desc="Reset the bombs with 'q'">
         if (e.getKeyChar() == 'q') { //need to make an array that adds length to "bombs"
-            bombs = new int[3][3];
+            bombs = new int[3][1];
             bombs[0][0] = (int) Math.floor(Math.random() * 255) + 1;
-            bombs[0][1] = (int) Math.floor(Math.random() * 255) + 1;
-            bombs[0][2] = (int) Math.floor(Math.random() * 255) + 1;
 
             //setting random x values
             bombs[1][0] = (int) Math.floor(Math.random() * 300) + 10;
-            bombs[1][1] = (int) Math.floor(Math.random() * 300) + 10;
-            bombs[1][2]= (int) Math.floor(Math.random() * 300) + 10;
+
 
             //setting y values
             bombs[2][0] = 0;
-            bombs[2][1] = 0;
-            bombs[2][2]= 0;
+
         }
         //</editor-fold>
 
@@ -452,6 +477,17 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
                 j++;
             }
         }
+        return placeholder;
+    }
+    public static int[][] bombCalculator(int[][] x) {
+        int[][] placeholder = new int[3][x[0].length + 1];
+        for (int i = 0; i < x[0].length; i++) {
+            placeholder[0][i] = x[0][i];
+            placeholder[1][i] = x[1][i];
+            placeholder[2][i] = x[2][i];
+        }
+        placeholder[0][x[0].length] = (int) Math.floor(Math.random() * 255) + 1;
+        placeholder[1][x[0].length] = (int) Math.floor(Math.random() * 300) + 10;
         return placeholder;
     }
 
