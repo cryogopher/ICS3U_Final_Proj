@@ -10,6 +10,11 @@ TD:
  - Sprites for bombs, missles etc.
 
 TD (first check):
-- Falling bombs at random positions
-- Losing lives when bomb touches ground
-- Bombs r removed when bomb value is represented
+- Falling bombs at random positions  (done)
+- Losing lives when bomb touches ground  (done)
+- Bombs r removed when bomb value is represented (done)
+
+TD June.04/24:
+- Highscore
+- Missle Shooting out animation
+
