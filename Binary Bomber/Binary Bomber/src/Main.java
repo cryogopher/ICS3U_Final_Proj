@@ -147,30 +147,18 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
         //<editor-fold desc="Game state 2 (gameplay)">
         if(gameState == 2){
 
-            //<editor-fold desc="Game state 2 transition">
-            if(isTransition){
-                backGroundY += ymodifier;
-                foreGroundY += ymodifier - 9;
-                g.drawImage(gs0, backGroundX, backGroundY, null);
-                g.drawImage(gs1, foreGroundX, foreGroundY, null);
-                g.drawImage(menuStartButtonReleased, foreGroundX + 50, foreGroundY + 200, null);
-                g.drawImage(CreditButtonReleased, foreGroundX+120, foreGroundY +340, null);
-                g.drawImage(creditBackReleased, foreGroundX + 820, foreGroundY + 500, null);
-                if(backGroundY == -600){
-                    isTransition = false;
-                }
-            }
-            //</editor-fold>
-
             // Game state 2 gameplay
             if(!isTransition) {
 
                 if(lives <= 0){
                     g.drawString("LOSELOSELOSELLOSELOE", 0, 300);
-
+                    gameState = 3;
+                    lives = 3;
+                    bombs = new int[3][3];
                 }
-                g.setFont(new Font("Comic Sans MS", 1, 50));
-                g.drawString("Press q to reset", 0, 40);
+
+                g.setFont(new Font("Comic Sans MS", 1, 30));
+                g.drawString("q, reset bombs fall anyway tho", 0, 40);
                 g.setColor(new Color(0, 255, 32));
 
                 // drawing and key pressed and key released
@@ -221,17 +209,16 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
                     bombs[2][i] += 1; //this moves the bomb down
                     if(bombs[2][i] > 500){
                         lives -= 1;
+                        System.out.println(lives);
                         //if a bomb reaches the bottom, destroy it
                         bombs = bombCalculator(bombs, bombs[0][i]);
                         break;
                     }
                     g.drawImage(bomb, bombs[1][i], bombs[2][i], null);
-
                     g.drawString(String.valueOf(bombs[0][i]), bombs[1][i], bombs[2][i]);
                 }
                 //</editor-fold>
 
-                System.out.println(lives);
                 //<editor-fold desc="random bomb spawner">
                 if(spawner == 0){
                     spawnerNum = (int) Math.floor(Math.random() * 160) + 120;
@@ -243,6 +230,20 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
                 //</editor-fold>
                 }
             }
+            //<editor-fold desc="Game state 2 transition">
+            else{
+                backGroundY += ymodifier;
+                foreGroundY += ymodifier - 9;
+                g.drawImage(gs0, backGroundX, backGroundY, null);
+                g.drawImage(gs1, foreGroundX, foreGroundY, null);
+                g.drawImage(menuStartButtonReleased, foreGroundX + 50, foreGroundY + 200, null);
+                g.drawImage(CreditButtonReleased, foreGroundX+120, foreGroundY +340, null);
+                g.drawImage(creditBackReleased, foreGroundX + 820, foreGroundY + 500, null);
+                if(backGroundY == -600){
+                    isTransition = false;
+                }
+            }
+            //</editor-fold>
         }
 
 
@@ -256,6 +257,7 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
             }
         }
         //</editor-fold>
+
 
 
     }
@@ -296,7 +298,7 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
         frame.setVisible(true);
         frame.pack();
 
-        // set bomb values
+        // set bomb values (dont need this later)
         bombs[0][0] = (int) Math.floor(Math.random() * 255) + 1;
 
         //setting random x values
@@ -304,7 +306,7 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
 
 
         //setting y values
-        bombs[2][0] = 0;
+        bombs[2][0] = -100;
 
     }
 
@@ -370,7 +372,7 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
 
 
             //setting y values
-            bombs[2][0] = 0;
+            bombs[2][0] = -100;
 
         }
         //</editor-fold>
@@ -488,6 +490,8 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
         }
         placeholder[0][x[0].length] = (int) Math.floor(Math.random() * 255) + 1;
         placeholder[1][x[0].length] = (int) Math.floor(Math.random() * 300) + 10;
+        placeholder[2][x[0].length] = -100;
+
         return placeholder;
     }
 
