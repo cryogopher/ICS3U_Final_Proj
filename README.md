@@ -16,7 +16,7 @@ TD (first check):
 
 TD June.04/24:
 - Highscore
-- Missle Shooting out animation
+- Missle Shooting out animation (done)
 
 12/24
 - Make it so only one bomb value can spawn?
