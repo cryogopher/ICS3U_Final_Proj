@@ -61,21 +61,20 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
     public static int xmodifier = 0;
     public static int ymodifier = 0;
     //</editor-fold>
-
     //<editor-fold desc="Gameplay Variables">
     public static int score = 0;
     public static int lives = 3;
     //</editor-fold>
-
     //<editor-fold desc="Arrays">
     public static int[] binary = {0, 0, 0, 0, 0, 0, 0, 0};
     //stores binary value
-    public static int[][] bombs = new int[3][3];
+    public static int[][] bombs = new int[3][1];
     //{bomb value, bomb value, bomb value}
     //{   x value,    x value,   x value }
     //{   y value,    y value,   y value }
     //added option of having a fourth column, 0/1 that lets you
     //change the speed of the bomb (ie. 1 means an angry bomb which moves a lot quicker)
+    public static int[][] missiles = new int[3][0];
     public static boolean[] binaryDigitPressed = {false, false, false, false, false, false, false, false};
     //</editor-fold>
 
@@ -152,12 +151,11 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
 
         //<editor-fold desc="Game state 2 (gameplay)">
         if(gameState == 2){
-            score = 0;
+
             // Game state 2 gameplay
             if(!isTransition) {
 
                 if(lives <= 0){
-                    g.drawString("LOSELOSELOSELLOSELOE", 0, 300);
                     gameState = 3;
                     lives = 3;
                     bombs = new int[3][3];
@@ -179,7 +177,6 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
                     g.drawImage(BombHit2, 0, -5, null);
                     g.drawImage(Lives, 20, 20, null);
                 }
-
 
 
                 g.setFont(new Font("Comic Sans MS", 1, 30));
@@ -204,8 +201,14 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
                 // if integer matches with bomb
                 for (int i = 0; i < bombs[0].length; i++) {
                     if (binaryValue(binary) == bombs[0][i]) {
-                        score += 1;
-                        bombs = bombCalculator(bombs, binaryValue(binary));
+
+                        //Adds length to missile array
+                        missiles = bombCalculator(missiles);
+                        //Makes missile array copy the bomb value of the typed in bomb number
+                        missiles[0][missiles[0].length-1] = bombs[0][i];
+                        missiles[1][missiles[0].length-1] = bombs[1][i];
+                        missiles[2][missiles[0].length-1] = 500;
+
                         binary[0] = 0; //unironically the fastest way to reset
                         binary[1] = 0;
                         binary[2] = 0;
@@ -223,24 +226,51 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
                 //conversion of array into decimal representation
                 g.setFont(new Font("PseudoText", 1, 15));
                 g.drawString(String.valueOf(binaryValue(binary)), 189, 569);
-
                 //</editor-fold>
 
                 //<editor-fold desc="Drawing bombs">
                 //random bomb number display
-                g.setColor(new Color(0, 255, 32));
                 g.setFont(new Font("Comic Sans MS", 1, 13));
-                for (int i = 0, y = 300; i < bombs[0].length; i++, y -= 50) {
+                for (int i = 0; i < bombs[0].length; i++) {
+                    g.setColor(new Color(0, 255, 32));
+
                     bombs[2][i] += 1; //this moves the bomb down
-                    if(bombs[2][i] > 460){
+
+                    //draw the bomb and its number value
+                    g.drawImage(bomb, bombs[1][i], bombs[2][i], null);
+                    g.drawString(String.valueOf(bombs[0][i]), bombs[1][i]+8, bombs[2][i]+50);
+
+                    if(bombs[2][i] > 500){
                         lives -= 1;
-                        System.out.println(lives);
-                        //if a bomb reaches the bottom, destroy it
+                        //if a bomb reaches the bottom, destroy it, deduct a life
                         bombs = bombCalculator(bombs, bombs[0][i]);
                         break;
                     }
-                    g.drawImage(bomb, bombs[1][i], bombs[2][i], null);
-                    g.drawString(String.valueOf(bombs[0][i]), bombs[1][i]+8, bombs[2][i]+50);
+
+                    //if there are missiles present:
+                    if(missiles[0].length > 0){
+                        g.setColor(new Color(0, 0, 0));
+
+                        //for each missile, move them up
+                        for(int p = 0; p < missiles[0].length; p++){
+                            //find corresponding bomb with missile
+                            if(missiles[0][p] == bombs[0][i]){
+                                //move missile up
+                                missiles[2][p] -= 10;
+                                //draw the missile
+                                g.drawString("MISSILE", missiles[1][p]-30, missiles[2][p]);
+
+                                //when the missile touches, delete the bomb and missile
+                                if(missiles[2][p] < bombs[2][i]+10 ){
+                                    bombs = bombCalculator(bombs, bombs[0][i]);
+                                    missiles = bombCalculator(missiles, missiles[0][p]);
+                                    break;
+                                }
+                            }
+                        }
+
+                    }
+
                 }
                 //</editor-fold>
 
@@ -251,7 +281,7 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
                 spawner += 1;
                 if(spawnerNum == spawner){
                     spawner = 0;
-                    bombs = bombCalculator(bombs);
+                    bombs = bombRandom(bombCalculator(bombs));
                 //</editor-fold>
                 }
             }
@@ -270,7 +300,7 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
             }
             //</editor-fold>
         }
-        //</editor-fold>
+
 
         //<editor-fold desc="Game state 3 (Loss Screen)">
         if(gameState == 3){
@@ -282,6 +312,8 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
             }
         }
         //</editor-fold>
+
+
 
     }
 
@@ -507,18 +539,25 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
         }
         return placeholder;
     }
+
+    //adds a bomb to the array
     public static int[][] bombCalculator(int[][] x) {
-        int[][] placeholder = new int[3][x[0].length + 1];
+        int[][] placeholder = new int[3][x[0].length + 1]; //if bombs
         for (int i = 0; i < x[0].length; i++) {
             placeholder[0][i] = x[0][i];
             placeholder[1][i] = x[1][i];
             placeholder[2][i] = x[2][i];
+
         }
-        placeholder[0][x[0].length] = (int) Math.floor(Math.random() * 255) + 1;
-        placeholder[1][x[0].length] = (int) Math.floor(Math.random() * 300) + 10;
-        placeholder[2][x[0].length] = -100;
 
         return placeholder;
+    }
+
+    //assigns random bomb value to the new bomb in the array
+    public static int[][] bombRandom(int[][] x){
+        x[0][x[0].length-1] = (int) Math.floor(Math.random() * 255) + 1;
+        x[1][x[0].length-1] = (int) Math.floor(Math.random() * 300) + 10;
+        return x;
     }
 
 }
