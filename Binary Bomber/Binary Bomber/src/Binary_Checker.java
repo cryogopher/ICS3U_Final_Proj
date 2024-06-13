@@ -12,30 +12,16 @@ import java.security.Key;
 //another variable
 //Math.floor(Math.random) // for random number generation
 public class Binary_Checker extends JPanel implements KeyListener, Runnable {
-    public static BufferedImage bomb;
     public static int[] binary = {0, 0, 0, 0, 0, 0, 0, 0};
     //stores binary value
-    public static int[][] bombs = new int[3][1];
+    public static int[][] bombs = new int[3][3];
     //{bomb value, bomb value, bomb value}
     //{   x value,    x value,   x value }
     //{   y value,    y value,   y value }
     //added option of having a fourth column, 0/1 that lets you
     //change the speed of the bomb (ie. 1 means an angry bomb which moves a lot quicker)
-    public static int[][] missiles = new int[3][0];
-    //missiles array is just gonna be the same size (I can't be bothered to make it a 1x2)
-    //{bomb value, bomb value, bomb value}
-    //{   y value,    y value,   y value }
-    //(the x value is irrelevant)
 
     //make a frame counter for bomb animation later
-    public static int lives = 3;
-
-    //counter for the spawner
-    public static int spawner = 0;
-    //random number the spawnerNum has to be before it spawns a bomb
-    public static int spawnerNum = 0;
-
-
     public Binary_Checker() {
         setPreferredSize(new Dimension(400, 600));
         this.setFocusable(true);
@@ -46,8 +32,6 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
     }
 
     public static void main(String[] args) throws IOException {
-        bomb = ImageIO.read(new File("bomb.png"));
-
         JFrame frame = new JFrame("Binary Check");
         Binary_Checker panel = new Binary_Checker();
         frame.add(panel);
@@ -55,22 +39,22 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
         frame.pack();
         //setting bomb value
         bombs[0][0] = (int) Math.floor(Math.random() * 255) + 1;
-
+        bombs[0][1] = (int) Math.floor(Math.random() * 255) + 1;
+        bombs[0][2]= (int) Math.floor(Math.random() * 255) + 1;
 
         //setting random x values
         bombs[1][0] = (int) Math.floor(Math.random() * 300) + 10;
+        bombs[1][1] = (int) Math.floor(Math.random() * 300) + 10;
+        bombs[1][2]= (int) Math.floor(Math.random() * 300) + 10;
 
         //setting y values
         bombs[2][0] = 0;
-
+        bombs[2][1] = 0;
+        bombs[2][2]= 0;
     }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if(lives <= 0){
-            g.drawString("LOSELOSELOSELLOSELOE", 0, 300);
-
-        }
 
         g.setFont(new Font("Comic Sans MS", 1, 50));
         g.drawString("Press q to reset", 0, 40);
@@ -84,15 +68,7 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
         for (int i = 0; i < bombs[0].length; i++) {
             if (binaryValue(binary) == bombs[0][i]) {
                 g.setColor(new Color(0, 255, 32));
-
-                //Adds length to missile array
-                missiles = bombCalculator(missiles);
-                //Makes missile array copy the bomb value of the typed in bomb number
-                missiles[0][missiles[0].length-1] = bombs[0][i];
-                missiles[1][missiles[0].length-1] = bombs[1][i];
-                missiles[2][missiles[0].length-1] = 450;
-
-                //reset binary counter at bottom after typing correct value
+                bombs = bombCalculator(bombs, binaryValue(binary));
                 binary[0] = 0; //unironically the fastest way to reset
                 binary[1] = 0;
                 binary[2] = 0;
@@ -111,59 +87,13 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
         g.drawString(String.valueOf(binaryValue(binary)), 300, 400);
         g.setColor(new Color(0, 0, 0));
 
-        g.setFont(new Font("Comic Sans MS", 1, 30));
 
         //random bomb number display
         for (int i = 0; i < bombs[0].length; i++) {
-
             bombs[2][i] += 1; //this moves the bomb down
-
-            //draw the bomb and its number value
-            g.drawImage(bomb, bombs[1][i], bombs[2][i], null);
             g.drawString(String.valueOf(bombs[0][i]), bombs[1][i], bombs[2][i]);
-
-            if(bombs[2][i] > 500){
-                lives -= 1;
-                //if a bomb reaches the bottom, destroy it, deduct a life
-                bombs = bombCalculator(bombs, bombs[0][i]);
-                break;
-            }
-
-            //if there are missiles present:
-            if(missiles[0].length > 0){
-
-                //for each missile, move them up
-                for(int p = 0; p < missiles[0].length; p++){
-                    //find corresponding bomb with missile
-                    if(missiles[0][p] == bombs[0][i]){
-                        //move missile up
-                        missiles[2][p] -= 10;
-                        //draw the missile
-                        g.drawString("MISSILE", missiles[1][p]-30, missiles[2][p]);
-
-                        //when the missile touches, delete the bomb and missile
-                        if(missiles[2][p] < bombs[2][i]+10 ){
-                            bombs = bombCalculator(bombs, bombs[0][i]);
-                            missiles = bombCalculator(missiles, missiles[0][p]);
-                            break;
-                        }
-                    }
-                }
-
-            }
-
         }
 
-        System.out.println(lives);
-
-        if(spawner == 0){
-            spawnerNum = (int) Math.floor(Math.random() * 160) + 120;
-        }
-        spawner += 1;
-        if(spawnerNum == spawner){
-            spawner = 0;
-            bombs = bombRandom(bombCalculator(bombs));
-        }
 
     }
 
@@ -191,12 +121,13 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
 
     public void keyReleased(KeyEvent e) {
         if (e.getKeyChar() == 'q') { //need to make an array that adds length to "bombs"
-            bombs = new int[3][1];
-            lives = 3;
+            bombs = new int[3][3];
             bombs[0][0] = (int) Math.floor(Math.random() * 255) + 1;
-
+            bombs[0][1] = (int) Math.floor(Math.random() * 255) + 1;
+            bombs[0][2]= (int) Math.floor(Math.random() * 255) + 1;
             bombs[1][0] = (int) Math.floor(Math.random() * 300) + 10;
-
+            bombs[1][1] = (int) Math.floor(Math.random() * 300) + 10;
+            bombs[1][2]= (int) Math.floor(Math.random() * 300) + 10;
         }
 
         if (e.getKeyChar() == '8') {
@@ -267,6 +198,7 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
     public void keyTyped(KeyEvent e) {
     }
 
+
     //calculates the decimal value given a binary array
 
     public static int binaryValue(int[] x) {
@@ -278,7 +210,6 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
     }
 
     //Calculates the amount of bombs at any given time
-    //subtracts total bomb value
     public static int[][] bombCalculator(int[][] x, int y) {
         int[][] placeholder = new int[3][x[0].length - 1];
         for (int i = 0, j = 0; i < x[0].length; i++) {
@@ -290,26 +221,6 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
             }
         }
         return placeholder;
-    }
-
-    //adds bomb it to the array
-    public static int[][] bombCalculator(int[][] x) {
-        int[][] placeholder = new int[3][x[0].length + 1]; //if bombs
-        for (int i = 0; i < x[0].length; i++) {
-            placeholder[0][i] = x[0][i];
-            placeholder[1][i] = x[1][i];
-            placeholder[2][i] = x[2][i];
-
-        }
-
-        return placeholder;
-    }
-
-    //assigns random bomb value to the new bomb in the array
-    public static int[][] bombRandom(int[][] x){
-        x[0][x[0].length-1] = (int) Math.floor(Math.random() * 255) + 1;
-        x[1][x[0].length-1] = (int) Math.floor(Math.random() * 300) + 10;
-        return x;
     }
 
 }
