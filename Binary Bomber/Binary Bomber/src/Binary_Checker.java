@@ -15,6 +15,7 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
     public static BufferedImage bomb;
     public static int[] binary = {0, 0, 0, 0, 0, 0, 0, 0};
     //stores binary value
+    public static int acceleration = 1; //bomb acceleration
     public static int[][] bombs = new int[3][1];
     //{bomb value, bomb value, bomb value}
     //{   x value,    x value,   x value }
@@ -92,7 +93,7 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
                 //Makes missile array copy the bomb value of the typed in bomb number
                 missiles[0][missiles[0].length-1] = bombs[0][i];
                 missiles[1][missiles[0].length-1] = bombs[1][i];
-                missiles[2][missiles[0].length-1] = 450;
+                missiles[2][missiles[0].length-1] = 500;
 
                 //reset binary counter at bottom after typing correct value
                 binary[0] = 0; //unironically the fastest way to reset
@@ -135,11 +136,12 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
             if(missiles[0].length > 0){
 
                 //for each missile, move them up
-                for(int p = 0; p < missiles[0].length; p++){
+                for(int p = 0, speed = acceleration; p < missiles[0].length; p++){
                     //find corresponding bomb with missile
                     if(missiles[0][p] == bombs[0][i]){
                         //move missile up
-                        missiles[2][p] -= 10;
+                        missiles[2][p] -= speed;
+                        acceleration += 2;
                         //draw the missile
                         g.drawString("MISSILE", missiles[1][p]-30, missiles[2][p]);
 
@@ -148,6 +150,7 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
                         if(missiles[2][p] < bombs[2][i]+10 ){
                             bombs = bombCalculator(bombs, bombs[0][i]);
                             missiles = bombCalculator(missiles, missiles[0][p]);
+                            acceleration = 1;
                             break;
                         }
                     }
