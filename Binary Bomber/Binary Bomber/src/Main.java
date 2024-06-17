@@ -6,6 +6,8 @@ import java.io.*;
 import java.awt.event.*;
 import java.nio.Buffer;
 import java.security.Key;
+import java.util.Scanner;
+
 public class Main extends JPanel implements KeyListener, Runnable, MouseListener{
     // Game States
     // 0 - Start Menu
@@ -13,6 +15,8 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
     // 2 - Gameplay Screen
     // 3 - Loss
     public static int gameState = 0;
+    public static int[] highscore = new int[3];
+
 
     //<editor-fold desc="transition booleans">
     public static boolean isTransition = false;
@@ -42,6 +46,14 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
     public static BufferedImage binaryDigit1Pressed;
     public static BufferedImage bomb;
     public static BufferedImage Lives;
+    public static BufferedImage[] rockets = new BufferedImage[2];
+    public static int rocketCounter = 0;
+
+    public static BufferedImage[] explosions = new BufferedImage[3];
+    public static int explosionCounter = 0;
+    public static int explosionx = 0, explosiony = 0;
+
+
     //counter for the spawner
     public static int spawner = 0;
     //random number the spawnerNum has to be before it spawns a bomb
@@ -100,6 +112,21 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
         g.drawImage(gs0, backGroundX, backGroundY, null);
         g.drawImage(gs1, foreGroundX, foreGroundY, null);
         g.drawImage(menuStartButtonReleased, foreGroundX + 50, foreGroundY + 200, null);
+        g.setFont(new Font("PseudoText", 1, 25));
+        g.setColor(new Color(0,0,0));
+        g.drawString("HIGHSCORES", foreGroundX+1000, foreGroundY+220);
+        g.drawString(String.valueOf(highscore[0]), foreGroundX+1100, foreGroundY+260);
+        g.drawString(String.valueOf(highscore[1]), foreGroundX+1100, foreGroundY+310);
+        g.drawString(String.valueOf(highscore[2]), foreGroundX+1100, foreGroundY+360);
+        g.setFont(new Font("PseudoText", 1, 20));
+        g.drawString("(VERY SIMPLE INSTRUCTIONS):", foreGroundX + 820, foreGroundY+430);
+        g.drawString("Use 1-8 on your keyboard to type", foreGroundX + 820, foreGroundY+450);
+        g.drawString("in numbers. Make the number on the", foreGroundX + 820, foreGroundY+470);
+        g.drawString("bomb before it hits the ground!", foreGroundX + 820, foreGroundY+490);
+
+
+
+
         if(menuStartPressed)
         {
             g.drawImage(menuStartButtonPressed, foreGroundX + 50, foreGroundY + 200, null);
@@ -126,6 +153,17 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
                 g.drawImage(menuStartButtonReleased, foreGroundX + 50, foreGroundY + 200, null);
                 g.drawImage(CreditButtonReleased, foreGroundX+120, foreGroundY +340, null);
                 g.drawImage(creditBackReleased, foreGroundX + 820, foreGroundY + 500, null);
+                g.setFont(new Font("PseudoText", 1, 25));
+                g.drawString("HIGHSCORES", foreGroundX+1000, foreGroundY+220);
+                g.drawString(String.valueOf(highscore[0]), foreGroundX+1100, foreGroundY+260);
+                g.drawString(String.valueOf(highscore[1]), foreGroundX+1100, foreGroundY+310);
+                g.drawString(String.valueOf(highscore[2]), foreGroundX+1100, foreGroundY+360);
+                g.setFont(new Font("PseudoText", 1, 20));
+                g.drawString("(VERY SIMPLE INSTRUCTIONS):", foreGroundX + 820, foreGroundY+430);
+                g.drawString("Use 1-8 on your keyboard to type", foreGroundX + 820, foreGroundY+450);
+                g.drawString("in numbers. Make the number on the", foreGroundX + 820, foreGroundY+470);
+                g.drawString("bomb before it hits the ground!", foreGroundX + 820, foreGroundY+490);
+                score = 0;
 
                 if(backGroundX == 0){
                     isTransition = false;
@@ -144,10 +182,22 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
                 g.drawImage(menuStartButtonReleased, foreGroundX + 50, foreGroundY + 200, null);
                 g.drawImage(CreditButtonReleased, foreGroundX+120, foreGroundY +340, null);
                 g.drawImage(creditBackReleased, foreGroundX + 820, foreGroundY + 500, null);
+                g.setFont(new Font("PseudoText", 1, 25));
+                g.drawString("HIGHSCORES", foreGroundX+1000, foreGroundY+220);
+                g.drawString(String.valueOf(highscore[0]), foreGroundX+1100, foreGroundY+260);
+                g.drawString(String.valueOf(highscore[1]), foreGroundX+1100, foreGroundY+310);
+                g.drawString(String.valueOf(highscore[2]), foreGroundX+1100, foreGroundY+360);
+                g.setFont(new Font("PseudoText", 1, 20));
+                g.drawString("(VERY SIMPLE INSTRUCTIONS):", foreGroundX + 820, foreGroundY+430);
+                g.drawString("Use 1-8 on your keyboard to type", foreGroundX + 820, foreGroundY+450);
+                g.drawString("in numbers. Make the number on the", foreGroundX + 820, foreGroundY+470);
+                g.drawString("bomb before it hits the ground!", foreGroundX + 820, foreGroundY+490);
+
                 if(backGroundX == -400){
                     isTransition = false;
                 }
             }
+
         }
         //</editor-fold>
 
@@ -159,8 +209,23 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
 
                 if(lives <= 0){
                     gameState = 3;
+                    highscore = highscoreUpdater(highscore, score);
+                    try{
+                        PrintWriter outputFile = new PrintWriter(new FileWriter("highscores.txt"));
+                        outputFile.println(highscore[0]);
+                        outputFile.println(highscore[1]);
+                        outputFile.println(highscore[2]);
+
+                        outputFile.close();
+
+                    }
+                    catch(IOException e){
+
+                        throw new RuntimeException(e);
+                    }
                     lives = 3;
-                    bombs = new int[3][3];
+                    bombs = new int[3][1];
+                    bombs = bombRandom(bombs); //tweak this maybe so bombs dont spawn immediately
                 }
                 else if(lives == 3) {
                     g.drawImage(Lives, 20, 20, null);
@@ -200,6 +265,7 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
                     }
                 }
 
+
                 // if integer matches with bomb
                 for (int i = 0; i < bombs[0].length; i++) {
                     if (binaryValue(binary) == bombs[0][i]) {
@@ -233,6 +299,8 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
 
                 //<editor-fold desc="Drawing bombs">
                 //random bomb number display
+                g.setColor(new Color(255,255,255));
+                g.drawString(String.valueOf(score), 350, 50);
                 g.setFont(new Font("Comic Sans MS", 1, 13));
                 for (int i = 0; i < bombs[0].length; i++) {
                     g.setColor(new Color(0, 255, 32));
@@ -242,6 +310,7 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
                     //draw the bomb and its number value
                     g.drawImage(bomb, bombs[1][i], bombs[2][i], null);
                     g.drawString(String.valueOf(bombs[0][i]), bombs[1][i]+8, bombs[2][i]+50);
+
 
                     if(bombs[2][i] > 500){
                         lives -= 1;
@@ -264,22 +333,33 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
                                 //accelerate the bomb
 
                                 //draw the missile
-                                g.drawString("MISSILE", missiles[1][p]-30, missiles[2][p]);
+                                g.drawImage(rockets[rocketCounter], missiles[1][p], missiles[2][p], null);
+                                rocketCounter += 1;
+                                if(rocketCounter == 2) rocketCounter = 0;
 
 
                                 //when the missile touches, delete the bomb and missile
                                 if(missiles[2][p] < bombs[2][i]+10 ){
+                                    for(int l = 0 ; l < 3; l ++){
+                                        g.drawImage(explosions[l], bombs[1][i]-50, bombs[2][i]-30,null);
+                                    }
+                                    score += ((550-bombs[2][i])/10);
                                     bombs = bombCalculator(bombs, bombs[0][i]);
                                     missiles = bombCalculator(missiles, missiles[0][p]);
                                     acceleration = 1;
+                                    System.out.println(score);
                                     break;
                                 }
+
+
+
                             }
                         }
 
                     }
 
                 }
+
                 //</editor-fold>
 
                 //<editor-fold desc="random bomb spawner">
@@ -313,10 +393,13 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
         //<editor-fold desc="Game state 3 (Loss Screen)">
         if(gameState == 3){
             g.drawImage(loss, 0, 0, null);
+            g.setColor(new Color(255,255,255));
+            g.drawString("Highscore: " + String.valueOf(score), 100, 400);
             g.drawImage(creditBackReleased, 145, 200, null);
             if(LossScreenBack)
             {
                 g.drawImage(creditBackPressed,145, 200, null);
+
             }
         }
         //</editor-fold>
@@ -355,8 +438,22 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
         binaryDigit1Released =  ImageIO.read(new File("1Released.png"));
         binaryDigit0Pressed =  ImageIO.read(new File("0Pressed.png"));
         binaryDigit1Pressed =  ImageIO.read(new File("1Pressed.png"));
+        rockets[0] =  ImageIO.read(new File("RocketFrame1.png"));
+        rockets[1] =  ImageIO.read(new File("RocketFrame2.png"));
+        explosions[0] =  ImageIO.read(new File("BombExplosionFrame1.png"));
+        explosions[1] =  ImageIO.read(new File("BombExplosionFrame2.png"));
+        explosions[2] =  ImageIO.read(new File("BombExplosionFrame3.png"));
+
+
+
         bomb = ImageIO.read(new File("bomb.png"));
         Lives = ImageIO.read(new File("Lives.png"));
+
+        Scanner inputFile = new Scanner(new File("highscores.txt"));
+        for(int i = 0; i < 3; i++){
+            highscore[i] = inputFile.nextInt();
+        }
+        inputFile.close();
 
         JFrame frame = new JFrame("Binary Bomber");
         JPanel panel = new Main();
@@ -378,18 +475,6 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
 
     // Keybinding
     public void keyPressed(KeyEvent e){
-        //<editor-fold desc="lose condition">
-        //while in gameplay
-        if(e.getKeyChar() == '-' && gameState == 2 && !isTransition) {
-            //lose lol
-
-            gameState = 3;
-            backGroundX = 0;
-            backGroundY = 0;
-            System.out.println("any key to go back to menu");
-            repaint();
-        }
-        //</editor-fold>
 
         // is binary digit pressed
         for(int i = 0; i < binary.length; i++) {
@@ -566,6 +651,23 @@ public class Main extends JPanel implements KeyListener, Runnable, MouseListener
         x[0][x[0].length-1] = (int) Math.floor(Math.random() * 255) + 1;
         x[1][x[0].length-1] = (int) Math.floor(Math.random() * 300) + 10;
         return x;
+    }
+
+    public static int[] highscoreUpdater(int[] highscore, int score){
+        if(score > highscore[0]){
+            highscore[1] = highscore[0];
+            highscore[2] = highscore[1];
+            highscore[0] = score;
+        }
+        else if(score > highscore[1]){
+            highscore[2] = highscore[1];
+            highscore[1] = score;
+        }
+        else if(score > highscore[2]){
+            highscore[2] = score;
+        }
+
+        return highscore;
     }
 
 }

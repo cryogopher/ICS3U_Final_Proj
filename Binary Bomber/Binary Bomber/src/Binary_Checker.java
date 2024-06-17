@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.io.*;
 import java.awt.event.*;
+import java.util.Scanner;
 import java.nio.Buffer;
 import java.security.Key;
 
@@ -30,7 +31,9 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
 
     //make a frame counter for bomb animation later
 
+    public static int[] highscore = new int[3];
 
+    public static int score = 0;
     public static int lives = 3;
 
     //counter for the spawner
@@ -56,6 +59,15 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
         frame.add(panel);
         frame.setVisible(true);
         frame.pack();
+
+        Scanner inputFile = new Scanner(new File("highscores.txt"));
+        for(int i = 0; i < 3; i++){
+            highscore[i] = inputFile.nextInt();
+        }
+        inputFile.close();
+        //PrintWriter outputFile = new PrintWriter(new FileWriter("highscores.txt"));
+
+
         //setting bomb value
         bombs[0][0] = (int) Math.floor(Math.random() * 255) + 1;
 
@@ -71,8 +83,21 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         if(lives <= 0){
-            g.drawString("LOSELOSELOSELLOSELOE", 0, 300);
+            highscore = highscoreUpdater(highscore, score);
+            try{
+                PrintWriter outputFile = new PrintWriter(new FileWriter("highscores.txt"));
+                outputFile.println(highscore[0]);
+                outputFile.println(highscore[1]);
+                outputFile.println(highscore[2]);
 
+                outputFile.close();
+
+            }
+            catch(IOException e){
+
+                throw new RuntimeException(e);
+            }
+            lives = 3;
         }
 
         g.setFont(new Font("Comic Sans MS", 1, 50));
@@ -129,6 +154,8 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
                 lives -= 1;
                 //if a bomb reaches the bottom, destroy it, deduct a life
                 bombs = bombCalculator(bombs, bombs[0][i]);
+                System.out.println(lives);
+
                 break;
             }
 
@@ -148,9 +175,11 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
 
                         //when the missile touches, delete the bomb and missile
                         if(missiles[2][p] < bombs[2][i]+10 ){
+                            score += ((550-bombs[2][i])/10);
                             bombs = bombCalculator(bombs, bombs[0][i]);
                             missiles = bombCalculator(missiles, missiles[0][p]);
                             acceleration = 1;
+                            System.out.println(score);
                             break;
                         }
                     }
@@ -158,9 +187,12 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
 
             }
 
+
+
+
+
         }
 
-        System.out.println(lives);
 
         if(spawner == 0){
             spawnerNum = (int) Math.floor(Math.random() * 160) + 120;
@@ -318,4 +350,22 @@ public class Binary_Checker extends JPanel implements KeyListener, Runnable {
         return x;
     }
 
+    public static int[] highscoreUpdater(int[] highscore, int score){
+        if(score > highscore[0]){
+            highscore[1] = highscore[0];
+            highscore[2] = highscore[1];
+            highscore[0] = score;
+        }
+        else if(score > highscore[1]){
+            highscore[2] = highscore[1];
+            highscore[1] = score;
+        }
+        else if(score > highscore[2]){
+            highscore[2] = score;
+        }
+
+        return highscore;
+    }
 }
+//loploploploploplpolpo
+
