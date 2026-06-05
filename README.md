@@ -1,5 +1,11 @@
-Binary Bomber Game for U11 CS || May. 2024
+Binary Bomber Game for U11 CS || Finished May. 2024
+<img width="495" height="776" alt="image" src="https://github.com/user-attachments/assets/3b51f447-9287-41eb-8bfa-9337518d0755" />
+<img width="488" height="740" alt="image" src="https://github.com/user-attachments/assets/e0e78667-cf0f-4228-9101-c618e06b21ea" />
 
+- Paralax background
+- Saves highscores, points awarded depending on how early missles are shot down
+  
+Archived Planning:
 TD: 
  - Bombs falling at random positions in the screen (done)
      - bombs falling at different speeds? 
